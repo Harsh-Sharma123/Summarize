@@ -1,7 +1,10 @@
 "use client";
 
+import { useUploadThing } from "../../../utils/uploadthing";
 import UplaodFormInput from "./upload-form-input";
 import { z } from "zod";
+import { toast } from "sonner";
+import { generatePDFSummary } from "@/app/actions/upload-action";
 
 const schema = z.object({
   file: z
@@ -15,7 +18,18 @@ const schema = z.object({
 });
 
 export default function UploadForm() {
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const { startUpload, routeConfig } = useUploadThing("pdfUploader", {
+    onClientUploadComplete: () => {
+      console.log("uploaded successfully!");
+    },
+    onUploadError: (err) => {
+      toast("Error occurred while uploading PDF " + err.message);
+    },
+    onUploadBegin: ({ file }) => {
+      console.log("upload has begun for", file);
+    },
+  });
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     console.log("Submitted");
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -30,12 +44,33 @@ export default function UploadForm() {
       console.log(
         validatedFields.error.flatten().fieldErrors.file?.[0] ?? "Invalid File"
       );
+      toast(
+        "Something went wrong " +
+          validatedFields.error.flatten().fieldErrors.file?.[0] +
+          "Invalid File"
+      );
       return;
     }
 
-    // schema with zod
+    toast("Uploading PDF !! We are uploading you PDF.");
+
     // upload the file to uploadthing
+    const resp = await startUpload([file]);
+
+    if (!resp) {
+      toast("Something went wrong. Please use a different file.");
+      return;
+    }
+
+    toast(
+      "Processing PDF !! Hang tight our AI is reading through your documents."
+    );
+
     // parse the PDF using lang chain
+
+    const summary = await generatePDFSummary(resp);
+    console.log(summary);
+
     // save the summary to database
     // redirect to the [id] summary page
   };
