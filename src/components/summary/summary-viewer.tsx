@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import NavigationControls from "./navigation-controls";
+import ProgressBar from "./progress-bar";
 
 const parseSection = (section: string) => {
   const [title, ...content] = section.split("\n");
@@ -36,21 +38,56 @@ const parseSection = (section: string) => {
   };
 };
 
+const SectionTitle = ({ title }: { title: string }) => {
+  return (
+    <div className="flex flex-col gap-2 mb-2 sticky top-0 pt-2 pb-4 bg-background/80 backdrop-blur-xs z-10">
+      <h2 className="text-3xl lg:text-4xl text-center font-bold flex justify-center items-center">
+        {title}
+      </h2>
+    </div>
+  );
+};
+
 export default function SummaryViewer({ summary }: { summary: string }) {
   const [currentSection, setCurrentSection] = useState(0);
+
+  const sectionSelect = (index: number) => {
+    setCurrentSection(Math.min(Math.max(index, 0), sections.length - 1));
+  };
+
+  const handlePrevious = () => {
+    setCurrentSection((prev) => Math.max(prev - 1, 0));
+  };
+
+  const handleNext = () => {
+    setCurrentSection((next) => Math.min(next + 1, sections.length - 1));
+  };
+
   const sections = summary
     .split("\n#")
     .map((section) => section.trim())
     .filter(Boolean)
     .map(parseSection);
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{sections[currentSection].title}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        {JSON.stringify(sections[currentSection].points)}
-      </CardContent>
+    <Card className="relative px-2 h-[500px] sm:h-[600px] lg:h-[700px] w-full xl:w-[600px] overflow-hidden bg-linear-to-br from-background via-background/95 to-rose-500/5 backdrop-blur-lg shadow-2xl rounded-3xl border border-rose-500/10">
+      <ProgressBar currentSection={currentSection} sections={sections} />
+      <div className="h-full overflow-y-auto scrollbar-hide pt-12 sm:pt-16 sm:pb-24">
+        <div className="px-4 sm:px-6">
+          <SectionTitle title={sections[currentSection]?.title || ""} />
+          <ul>
+            {sections[currentSection]?.points.map((point, index) => (
+              <li key={index}>{point}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+      <NavigationControls
+        onPrevious={handlePrevious}
+        currentSection={currentSection}
+        totalSections={sections.length}
+        onSectionSelect={sectionSelect}
+        onNext={handleNext}
+      />
     </Card>
   );
 }
