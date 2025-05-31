@@ -21,3 +21,15 @@ export async function getSummaryById(id: string) {
     return null;
   }
 }
+
+export async function getUserFilesUploadedCount(userId: string) {
+  try {
+    const sql = await getDBConnection();
+
+    const [count] =
+      await sql`select count(*) as count from pdf_summaries where user_id = ${userId}`;
+    return count;
+  } catch (err) {
+    console.log(err);
+  }
+}

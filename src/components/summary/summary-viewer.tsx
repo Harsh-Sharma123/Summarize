@@ -4,28 +4,31 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import NavigationControls from "./navigation-controls";
 import ProgressBar from "./progress-bar";
+import ContentSection from "./content-section";
 
-const parseSection = (section: string) => {
+export const parseSection = (
+  section: string
+): { title: string; points: string[] } => {
   const [title, ...content] = section.split("\n");
+
   const cleanTitle = title.startsWith("#")
     ? title.substring(1).trim()
     : title.trim();
 
-  //   console.log(typeof content);
-
-  const points: String[] = [];
-
+  const points: string[] = [];
   let currentPoint = "";
+
   content.forEach((line) => {
-    const trimmedline = line.trim();
-    if (trimmedline.startsWith("•")) {
+    const trimmedLine = line.trim();
+    if (trimmedLine.startsWith("•")) {
       if (currentPoint) points.push(currentPoint.trim());
-      currentPoint = trimmedline;
-    } else if (!trimmedline) {
+      currentPoint = trimmedLine;
+    } else if (!trimmedLine) {
       if (currentPoint) points.push(currentPoint.trim());
       currentPoint = "";
+    } else {
+      currentPoint += " " + trimmedLine;
     }
-    currentPoint += " " + trimmedline;
   });
 
   if (currentPoint) points.push(currentPoint.trim());
@@ -74,11 +77,10 @@ export default function SummaryViewer({ summary }: { summary: string }) {
       <div className="h-full overflow-y-auto scrollbar-hide pt-12 sm:pt-16 sm:pb-24">
         <div className="px-4 sm:px-6">
           <SectionTitle title={sections[currentSection]?.title || ""} />
-          <ul>
-            {sections[currentSection]?.points.map((point, index) => (
-              <li key={index}>{point}</li>
-            ))}
-          </ul>
+          <ContentSection
+            title={sections[currentSection]?.title || ""}
+            points={sections[currentSection]?.points || []}
+          />
         </div>
       </div>
       <NavigationControls
