@@ -10,6 +10,7 @@ import {
   SignedOut,
   UserButton,
 } from "@clerk/nextjs";
+import PlanBadge from "./planBadge";
 
 export default function Header() {
   const isLoggedIn = false;
@@ -26,8 +27,10 @@ export default function Header() {
       </div>
 
       <div className="flex lg:justify-center gap-4 lg:gap-12 lg:items-center">
-        <NavLink href="/#pricing">Pricing</NavLink>
-        {isLoggedIn && <NavLink href="/dashboard">Your Summaries</NavLink>}
+        <SignedIn>
+          <NavLink href="/#pricing">Pricing</NavLink>
+          <NavLink href="/dashboard">Your Summaries</NavLink>
+        </SignedIn>
       </div>
 
       <div className="flex lg:justify-end lg:flex-1">
@@ -35,7 +38,7 @@ export default function Header() {
           <div className="flex gap-2 items-center">
             <NavLink href="/upload">Upload a PDF</NavLink>
             <SignedIn>
-              <div>Pro</div>
+              <PlanBadge />
               <UserButton />
             </SignedIn>
           </div>
@@ -44,7 +47,10 @@ export default function Header() {
         <SignedOut>
           {/* <SignInButton /> */}
           {/* <SignUpButton /> */}
-          <NavLink href="/sign-in">Sign In</NavLink>
+          <NavLink href="/sign-in" className="mr-4">
+            Sign In
+          </NavLink>
+          <NavLink href="/sign-up">Sign Up</NavLink>
         </SignedOut>
       </div>
     </nav>

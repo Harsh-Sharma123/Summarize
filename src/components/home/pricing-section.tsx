@@ -1,46 +1,8 @@
 import { cn } from "@/lib/utils";
 import { ArrowRight, CheckIcon } from "lucide-react";
 import Link from "next/link";
-
-type Plan = {
-  name: string;
-  id: string;
-  price: number;
-  description: string;
-  items: string[];
-  paymentLink: string;
-  priceId: string;
-};
-
-const pricingPlans: Plan[] = [
-  {
-    name: "Basic",
-    price: 49,
-    description: "Perfect for occasional use",
-    items: [
-      "5 PDF summaries per month",
-      "Standard processing speed",
-      "Email support",
-    ],
-    id: "basic",
-    paymentLink: "https://buy.stripe.com/test_3cscMQcF8548gz6cMM",
-    priceId: "price_1RA9yVCTlpmJdURCo5eDA5T5",
-  },
-  {
-    name: "Pro",
-    price: 129,
-    description: "For professionals and teams",
-    items: [
-      "Unlimited PDF summaries",
-      "Priority processing",
-      "24/7 priority support",
-      "Markdown Export",
-    ],
-    id: "pro",
-    paymentLink: "https://buy.stripe.com/test_28o7sw7kO7cg6Yw7st",
-    priceId: "price_1RA9yVCTlpmJdURCk8Oi1pwO",
-  },
-];
+import { isDev } from "../../../utils/helper";
+import { Plan, pricingPlans } from "../../../utils/constants";
 
 const PricingCard = ({
   name,
@@ -67,9 +29,9 @@ const PricingCard = ({
         </div>
 
         <div className="flex gap-2">
-          <p className="text-5xl tracking-tight font-extrabold">$ {price}</p>
+          <p className="text-5xl tracking-tight font-extrabold">Rs. {price}</p>
           <div className="flex flex-col justify-end mb-[4px]">
-            <p className="text-xs uppercase font-semibold">USD</p>
+            <p className="text-xs uppercase font-semibold">INR</p>
             <p className="text-xs">/month</p>
           </div>
         </div>
@@ -104,7 +66,10 @@ const PricingCard = ({
 export default function PricingSection() {
   return (
     <section>
-      <div className="py-12 lg:py-24 px-4 sm:px-6 lg:px-8 lg:pt-12 mx-auto max-w-5xl">
+      <div
+        className="py-12 lg:py-24 px-4 sm:px-6 lg:px-8 lg:pt-12 mx-auto max-w-5xl"
+        id="pricing"
+      >
         <div className="flex items-center justify-center w-full pb-12">
           <h2 className="uppercase font-bold text-xl mb-8 text-rose-500">
             Pricing

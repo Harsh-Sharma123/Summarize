@@ -11,6 +11,7 @@ import {
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
+// using zod library to validate the file schema
 const schema = z.object({
   file: z
     .instanceof(File, { message: "Invalid File" })
