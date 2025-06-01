@@ -6,10 +6,12 @@ import { z } from "zod";
 import { toast } from "sonner";
 import {
   generatePDFSummary,
+  getPDFText,
   storePdfSummaryAction,
 } from "@/app/actions/upload-action";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import LoadingSkeleton from "./loading-skeleton";
 
 // using zod library to validate the file schema
 const schema = z.object({
@@ -36,7 +38,7 @@ export default function UploadForm() {
     onUploadError: (err) => {
       toast("Error occurred while uploading PDF " + err.message);
     },
-    onUploadBegin: ({ file }) => {
+    onUploadBegin: (file) => {
       console.log("upload has begun for", file);
     },
   });
@@ -53,7 +55,7 @@ export default function UploadForm() {
       // validating the fields using zod schema
       const validatedFields = schema.safeParse({ file });
 
-      console.log(validatedFields);
+      // console.log(validatedFields);
 
       if (!validatedFields.success) {
         setIsLoading(false);
@@ -84,9 +86,14 @@ export default function UploadForm() {
         "Processing PDF !! Hang tight our AI is reading through your documents."
       );
 
+      // Get File URL from the Uploaded Response
+      // console.log("RESPONSE", resp);
+      const uploadFileUrl = resp[0].ufsUrl;
+      // console.log("Uploaded File URL ", uploadFileUrl);
+
       // parse the PDF using lang chain
 
-      const result = await generatePDFSummary(resp);
+      const result = await generatePDFSummary(uploadFileUrl, resp[0].name);
 
       console.log(result);
 
@@ -98,7 +105,7 @@ export default function UploadForm() {
         let storeResult: any;
         if (data.summary) {
           storeResult = await storePdfSummaryAction({
-            fileUrl: resp[0].serverData.file.url,
+            fileUrl: resp[0].ufsUrl,
             summary: data.summary,
             title: data.title,
             fileName: file.name,
@@ -120,7 +127,7 @@ export default function UploadForm() {
       }
     } catch (err) {
       setIsLoading(false);
-      console.log("Hello ", err);
+      // console.log("Hello ", err);
       formRef.current?.reset();
     }
 
@@ -136,6 +143,24 @@ export default function UploadForm() {
           onSubmit={handleSubmit}
           ref={formRef}
         />
+        {isLoading && (
+          <>
+            <div className="relative">
+              <div
+                className="absolute inset-0 flex items-center"
+                aria-hidden="true"
+              >
+                <div className="w-full border-t border-gray-200 dark:border-gray-800"></div>
+              </div>
+              <div className="relative flex justify-center">
+                <span className="bg-backgroun px-3 text-muted-foreground text-sm">
+                  Processing
+                </span>
+              </div>
+            </div>
+            <LoadingSkeleton />
+          </>
+        )}
       </div>
     </section>
   );

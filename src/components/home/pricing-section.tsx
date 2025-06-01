@@ -2,7 +2,26 @@ import { cn } from "@/lib/utils";
 import { ArrowRight, CheckIcon } from "lucide-react";
 import Link from "next/link";
 import { isDev } from "../../../utils/helper";
-import { Plan, pricingPlans } from "../../../utils/constants";
+import {
+  ContainerVariants,
+  ItemVariants,
+  Plan,
+  pricingPlans,
+} from "../../../utils/constants";
+import { MotionDiv, MotionSection } from "../common/motion-wrapper";
+
+const listVariant = {
+  hidden: { opacity: 0, x: -20 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      type: "string",
+      damping: 20,
+      stiffness: 100,
+    },
+  },
+};
 
 const PricingCard = ({
   name,
@@ -14,36 +33,43 @@ const PricingCard = ({
   priceId,
 }: Plan) => {
   return (
-    <div className="relative w-full max-w-lg hover:scale-105 hover:transition-all duration-300">
+    <MotionDiv
+      variants={listVariant}
+      whileHover={{ scale: 1.02 }}
+      className="relative w-full max-w-lg hover:scale-105 hover:transition-all duration-300"
+    >
       <div
         className={cn(
           "relative flex flex-col justify-between h-full gap-4 lg:gap-8 z-10 p-8 rounded-2xl border-[2px] border-gray-200/20",
           id === "pro" && "border-rose-500 gap-5 border-4"
         )}
       >
-        <div className="flex justify-between items-center gap-4">
+        <MotionDiv
+          variants={listVariant}
+          className="flex justify-between items-center gap-4"
+        >
           <div>
             <p className="text-lg lg:text-xl font-bold capitalize">{name}</p>
             <p className="text-base-content/80 mt-2">{description}</p>
           </div>
-        </div>
+        </MotionDiv>
 
-        <div className="flex gap-2">
+        <MotionDiv variants={listVariant} className="flex gap-2">
           <p className="text-5xl tracking-tight font-extrabold">Rs. {price}</p>
           <div className="flex flex-col justify-end mb-[4px]">
             <p className="text-xs uppercase font-semibold">INR</p>
             <p className="text-xs">/month</p>
           </div>
-        </div>
+        </MotionDiv>
 
-        <div>
+        <MotionDiv variants={listVariant}>
           {items.map((item, idx) => (
             <li key={idx} className="flex items-center gap-2">
               <CheckIcon size={18} />
               <span>{item}</span>
             </li>
           ))}
-        </div>
+        </MotionDiv>
 
         <div className="space-y-2 flex justify-center w-full">
           <Link
@@ -59,22 +85,30 @@ const PricingCard = ({
           </Link>
         </div>
       </div>
-    </div>
+    </MotionDiv>
   );
 };
 
 export default function PricingSection() {
   return (
-    <section>
+    <MotionSection
+      variants={ContainerVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-100px" }}
+    >
       <div
         className="py-12 lg:py-24 px-4 sm:px-6 lg:px-8 lg:pt-12 mx-auto max-w-5xl"
         id="pricing"
       >
-        <div className="flex items-center justify-center w-full pb-12">
+        <MotionDiv
+          variants={ItemVariants}
+          className="flex items-center justify-center w-full pb-12"
+        >
           <h2 className="uppercase font-bold text-xl mb-8 text-rose-500">
             Pricing
           </h2>
-        </div>
+        </MotionDiv>
 
         <div className="relative flex flex-col justify-center lg:flex-row items-center lg:items-stretch gap-8">
           {pricingPlans.map((plan, index) => (
@@ -82,6 +116,6 @@ export default function PricingSection() {
           ))}
         </div>
       </div>
-    </section>
+    </MotionSection>
   );
 }

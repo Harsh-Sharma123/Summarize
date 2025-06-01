@@ -17,7 +17,7 @@ export const POST = async (req: NextRequest) => {
 
   const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
   try {
-    event = stripe.webhooks.constructEvent(payload, sig!, endpointSecret);
+    event = stripe.webhooks.constructEvent(payload, sig!, endpointSecret!);
 
     switch (event.type) {
       case "checkout.session.completed":

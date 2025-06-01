@@ -10,7 +10,7 @@ export default function ProgressBar({
   return (
     <div className="absolute top-0 left-0 right-0 x-20 bg-background/80 backdrop-blur-xs pt-4 pb-2 border-b border-rse-50/10">
       <div className="px-4 flex gap-1.5">
-        {sections.map((_, index) => (
+        {sections.map((_: string, index: number) => (
           <div
             key={index}
             className="h-1.5 flex-1 rounded-full bg-rose-500/10 overflow-hidden"
