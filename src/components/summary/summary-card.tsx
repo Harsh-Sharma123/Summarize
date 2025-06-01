@@ -4,6 +4,8 @@ import DeleteButton from "./delete-button";
 import { ExternalLink, FileText } from "lucide-react";
 import { cn, formatFileName } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
+import { MotionDiv } from "../common/motion-wrapper";
+import { ItemVariants } from "../../../utils/constants";
 
 const SummaryHeader = ({
   fileUrl,
@@ -49,7 +51,18 @@ const StatusBadge = ({ status }: { status: string }) => {
 
 export default function SummaryCard({ summary }: { summary: any }) {
   return (
-    <div>
+    <MotionDiv
+      variants={ItemVariants}
+      initial="hidden"
+      animate="visible"
+      whileHover={{
+        scale: 1.02,
+        transition: {
+          duration: 0.2,
+          ease: "easeOut",
+        },
+      }}
+    >
       <Card className="relative w-full">
         <div className="flex flex-col gap-3 sm:gap-4  p-4 sm:p-6">
           <div className="flex justify-between">
@@ -71,6 +84,6 @@ export default function SummaryCard({ summary }: { summary: any }) {
           </div>
         </div>
       </Card>
-    </div>
+    </MotionDiv>
   );
 }

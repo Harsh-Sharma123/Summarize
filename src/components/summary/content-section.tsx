@@ -1,5 +1,8 @@
 "use client";
 
+import { ContainerVariants, ItemVariants } from "../../../utils/constants";
+import { MotionDiv } from "../common/motion-wrapper";
+
 export function parsePoint(point: string) {
   const isNumbered = /^\d+\./.test(point);
   const isMainPoint = /^•/.test(point);
@@ -30,7 +33,10 @@ export function parseEmoji(content: string) {
 const EmojiPoint = ({ point, index }: { point: string; index: number }) => {
   const { emoji, text } = parseEmoji(point) || {};
   return (
-    <div className="group relative bg-linear-to-br from-gray-200/[0.08] to-gray-400/[0.03] p-4 rounded-2xl border border-gray-500/10 hover:shadow-lg transition-all">
+    <MotionDiv
+      variants={ItemVariants}
+      className="group relative bg-linear-to-br from-gray-200/[0.08] to-gray-400/[0.03] p-4 rounded-2xl border border-gray-500/10 hover:shadow-lg transition-all"
+    >
       <div className="absolute inset-0 bg-linear-to-r from-gray-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
       <div className="relative flex items-start gap-3">
         <span className="text-lg lg:text-xl shrink-0 pt-1">{emoji}</span>
@@ -38,19 +44,22 @@ const EmojiPoint = ({ point, index }: { point: string; index: number }) => {
           {text}
         </p>
       </div>
-    </div>
+    </MotionDiv>
   );
 };
 
 const RegularPoint = ({ point, index }: { point: string; index: number }) => {
   return (
-    <div className="group relative bg-linear-to-br from-gray-200/[0.08] to-gray-400/[0.03] p-4 rounded-2xl border border-gray-500/10 hover:shadow-lg transition-all">
+    <MotionDiv
+      variants={ItemVariants}
+      className="group relative bg-linear-to-br from-gray-200/[0.08] to-gray-400/[0.03] p-4 rounded-2xl border border-gray-500/10 hover:shadow-lg transition-all"
+    >
       <div className="absolute inset-0 bg-linear-to-r from-gray-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
 
       <p className="relativetext-lg lg:text-xl text-muted-foreground/90 leading-relaxed text-left">
         {point}
       </p>
-    </div>
+    </MotionDiv>
   );
 };
 
@@ -63,7 +72,14 @@ export default function ContentSection({
 }) {
   console.log(points);
   return (
-    <div className="space-y-4">
+    <MotionDiv
+      variants={ContainerVariants}
+      key={points.join("")}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      className="space-y-4"
+    >
       {points.map((point, index) => {
         const { isNumbered, isMainPoint, hasEmoji, isEmpty } =
           parsePoint(point);
@@ -73,11 +89,11 @@ export default function ContentSection({
         if (isEmpty) return null;
 
         if (hasEmoji || isMainPoint) {
-          return <EmojiPoint point={point} index={index} />;
+          return <EmojiPoint point={point} index={index} key={index} />;
         }
 
-        return <RegularPoint point={point} index={index} />;
+        return <RegularPoint point={point} index={index} key={index} />;
       })}
-    </div>
+    </MotionDiv>
   );
 }

@@ -1,10 +1,17 @@
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { ArrowRight } from "lucide-react";
+import { MotionDiv, MotionSection } from "../common/motion-wrapper";
+import { ContainerVariants } from "../../../utils/constants";
 
 export default function CTASection() {
   return (
-    <section className="bg-gray-50 py-12">
+    <MotionSection
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.2, staggerChildren: 0.2, delayChildren: 0.2 }}
+      className="bg-gray-50 py-12"
+    >
       <div className="py-12 lg:py-24 px-4 sm:px-6 lg:px-8 lg:pt-12 mx-auto max-w-5xl">
         <div className="flex flex-col items-center justify-center space-y-4 text-center">
           <div className="space-y-2">
@@ -39,6 +46,6 @@ export default function CTASection() {
           </div>
         </div>
       </div>
-    </section>
+    </MotionSection>
   );
 }

@@ -10,30 +10,50 @@ import { revalidatePath } from "next/cache";
 
 // Server Action : anytime we want to expose a function like http endpoint we can create a file with "use server" directive
 
-export async function generatePDFSummary(
-  uploadResponse: [
-    {
-      serverData: {
-        userId: string;
-        file: {
-          url: string;
-          name: string;
-        };
-      };
-    }
-  ]
-) {
-  if (!uploadResponse) {
-    return { success: false, message: "File Upload Failed !", data: null };
+export async function getPDFText({
+  fileUrl,
+  fileName,
+}: {
+  fileUrl: string;
+  fileName: string;
+}) {
+  if (!fileUrl) {
+    return {
+      success: false,
+      message: "File Upload Failed",
+      data: null,
+    };
   }
 
-  const {
-    serverData: {
-      userId,
-      file: { url: fileUrl, name: fileName },
-    },
-  } = uploadResponse[0];
+  try {
+    const pdfText = await fetchAndExtractText(fileUrl);
+    console.log(pdfText);
 
+    let summary;
+    if (!pdfText) {
+      return {
+        success: false,
+        message: "Failed to fetch and extract PDF text",
+        data: null,
+      };
+    }
+
+    const formattedFileName = formatFileNameAsTitle(fileName);
+
+    return {
+      success: true,
+      message: "PDF Text Generated Successfully",
+      data: {
+        title: formattedFileName,
+        pdfText,
+      },
+    };
+  } catch (err) {
+    return { success: false, message: "PDF Text Parsing Failed !", data: null };
+  }
+}
+
+export async function generatePDFSummary(fileUrl: string, fileName: string) {
   if (!fileUrl) {
     return {
       success: false,
@@ -48,20 +68,26 @@ export async function generatePDFSummary(
 
     let summary;
     try {
-      summary = await generateSummaryFromOpenAI(pdfText);
+      summary = await generateSummaryFromGemini(pdfText);
+
+      // cleaning first line
+
+      const lines = summary.split("\n");
+      summary = lines.slice(1).join("\n");
+
       console.log(summary);
     } catch (err) {
       console.log(err);
 
-      // call GEMINI
+      // call OPEN-AI
       if (err instanceof Error && err.message === "RATE_LIMIT_EXCEEDED") {
         try {
-          summary = await generateSummaryFromGemini(pdfText);
+          summary = await generateSummaryFromOpenAI(pdfText);
 
           // cleaning first line
 
-          const lines = summary.split("\n");
-          summary = lines.slice(1).join("\n");
+          const lines = summary?.split("\n");
+          summary = lines?.slice(1).join("\n");
         } catch (error) {
           console.log("Gemini API Failed", error);
         }

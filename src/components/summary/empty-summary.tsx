@@ -1,6 +1,8 @@
 import { FileText } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
+import { MotionDiv } from "../common/motion-wrapper";
+import { ItemVariants } from "../../../utils/constants";
 
 export default function EmptySummary() {
   return (

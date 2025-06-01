@@ -14,6 +14,9 @@ const fontSans = FontSans({
 
 export const metadata: Metadata = {
   title: "Summarize - AI-Powered PDF Summarization",
+  icons: {
+    icon: "/summary-icon.png",
+  },
   description:
     "Save hours of reading time. Transform lengthy PDFs into clear, accurate summaries in seconds with our advanced AI technology.",
 };
